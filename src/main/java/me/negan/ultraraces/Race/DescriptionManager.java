@@ -3,12 +3,11 @@ package me.negan.ultraraces.Race;
 import me.negan.ultraraces.UltraRaces;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RaceDescriptionManager {
+public class DescriptionManager {
 
     public static class Description {
         public final String name;
@@ -23,11 +22,11 @@ public class RaceDescriptionManager {
     }
     private final Map<String, Description> descriptions = new HashMap<>();
 
-    public RaceDescriptionManager(UltraRaces plugin) {
+    public DescriptionManager(UltraRaces plugin) {
         File file = new File(plugin.getDataFolder(), "racedescriptions.yml");
 
         if (!file.exists()) {
-            plugin.saveResource("racedescriptions.yml", false); // Ensure default copy
+            plugin.saveResource("racedescriptions.yml", false);
         }
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -48,7 +47,4 @@ public class RaceDescriptionManager {
         return descriptions.containsKey(raceKey.toLowerCase());
     }
 
-    public Iterable<String> getAllRaceKeys() {
-        return descriptions.keySet();
-    }
 }

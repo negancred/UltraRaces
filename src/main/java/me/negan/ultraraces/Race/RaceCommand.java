@@ -4,17 +4,18 @@ import me.negan.ultraraces.Utils.AttributeMethods;
 import me.negan.ultraraces.UltraRaces;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class RaceCommand implements CommandExecutor {
     private final UltraRaces plugin;
-    private final RaceDescriptionManager descManager;
-    public RaceCommand(UltraRaces plugin, RaceDescriptionManager descManager) {
+    private final DescriptionManager descManager;
+    public RaceCommand(UltraRaces plugin, DescriptionManager descManager) {
         this.plugin = plugin;
         this.descManager = descManager;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (!(sender instanceof Player player)) return true;
 
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
@@ -67,7 +68,7 @@ public class RaceCommand implements CommandExecutor {
                 sender.sendMessage("§7Skill: §a" + desc.skill);
             }
 
-            default -> sendPrefixed(sender, "Unknown subcommand. Use /race help.");
+            default -> sendPrefixed(sender, "Unknown command Use /race help.");
         }
         return true;
     }

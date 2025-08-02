@@ -1,7 +1,7 @@
 package me.negan.ultraraces;
 
 import me.negan.ultraraces.Race.RaceCommand;
-import me.negan.ultraraces.Race.RaceDescriptionManager;
+import me.negan.ultraraces.Race.DescriptionManager;
 import me.negan.ultraraces.Race.RaceListener;
 import me.negan.ultraraces.Race.Races.*;
 import org.bukkit.Bukkit;
@@ -17,8 +17,8 @@ public final class UltraRaces extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        RaceDescriptionManager raceDescriptionManager = new RaceDescriptionManager(this);
-        Objects.requireNonNull(getCommand("race")).setExecutor(new RaceCommand(this, raceDescriptionManager));
+        DescriptionManager descriptionManager = new DescriptionManager(this);
+        Objects.requireNonNull(getCommand("race")).setExecutor(new RaceCommand(this, descriptionManager));
         getServer().getPluginManager().registerEvents(new RaceListener(this), this);
 
         new BukkitRunnable() {
