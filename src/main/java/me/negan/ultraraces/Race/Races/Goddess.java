@@ -1,7 +1,7 @@
 package me.negan.ultraraces.Race.Races;
 
 import me.negan.ultraraces.UltraRaces;
-import me.negan.ultraraces.Helpers.Methods;
+import me.negan.ultraraces.Utils.Methods;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;

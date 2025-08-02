@@ -1,6 +1,6 @@
 package me.negan.ultraraces.Race;
 
-import me.negan.ultraraces.Helpers.AttributeMethods;
+import me.negan.ultraraces.Utils.AttributeMethods;
 import me.negan.ultraraces.UltraRaces;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;

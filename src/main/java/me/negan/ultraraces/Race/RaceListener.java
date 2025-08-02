@@ -1,6 +1,6 @@
 package me.negan.ultraraces.Race;
 
-import me.negan.ultraraces.Helpers.Methods;
+import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.Race.Races.Piglin;
 import me.negan.ultraraces.UltraRaces;
 import me.negan.ultraraces.Race.Races.*;

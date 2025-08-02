@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.attribute.Attribute;
-import me.negan.ultraraces.Helpers.AttributeMethods;
+import me.negan.ultraraces.Utils.AttributeMethods;
 import net.kyori.adventure.text.Component;
 
 import java.util.Objects;

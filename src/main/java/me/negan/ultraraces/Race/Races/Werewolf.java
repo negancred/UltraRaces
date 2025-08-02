@@ -1,12 +1,12 @@
 package me.negan.ultraraces.Race.Races;
 
-import me.negan.ultraraces.Helpers.Methods;
+import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import me.negan.ultraraces.Helpers.AttributeMethods;
+import me.negan.ultraraces.Utils.AttributeMethods;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
