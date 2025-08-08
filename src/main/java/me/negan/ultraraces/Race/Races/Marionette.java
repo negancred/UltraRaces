@@ -1,5 +1,6 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
 import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
@@ -11,13 +12,20 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-public class Marionette {
+public class Marionette extends Race {
+
     private static final Random random = new Random();
 
-    public static void tryRedirectMob(EntityTargetLivingEntityEvent event, UltraRaces plugin) {
-        if (!(event.getTarget() instanceof Player marionette)) return;
-        if (!plugin.getConfig().getString("races." + marionette.getUniqueId(), "").equalsIgnoreCase("marionette")) return;
+    public Marionette(UltraRaces plugin) {
+        super(plugin);
+    }
 
+    @Override
+    public String getRaceName() {
+        return "marionette";
+    }
+    public void onMobTarget(Player player, EntityTargetLivingEntityEvent event) {
+        if (!(event.getTarget() instanceof Player marionette)) return;
         if (random.nextDouble() <= 0.2) {
             List<LivingEntity> nearby = event.getEntity().getNearbyEntities(8, 8, 8).stream()
                     .filter(e -> e instanceof LivingEntity &&
@@ -35,7 +43,12 @@ public class Marionette {
         }
     }
 
-    public static void ActivateActiveSkill(Player player, UltraRaces plugin) {
+    @Override
+    public boolean ShouldActivateItemSkill(Player player) {
+        return player.getInventory().getItemInMainHand().getType() == Material.STRING;
+    }
+    @Override
+    public void ActivateActiveSkill(Player player) {
         if (Methods.isOnCooldown(player, plugin, "Commanding Pull", false)) return;
         Entity target = player.getTargetEntity(12);
         if (!(target instanceof LivingEntity livingTarget) || target == player){
@@ -56,9 +69,8 @@ public class Marionette {
                 .map(e -> (Creature) e)
                 .toList();
 
-        for (Creature creature : nearbyHostiles) {
-            creature.setTarget(livingTarget);
-        }
+        nearbyHostiles.forEach(creature -> creature.setTarget(livingTarget));
+
 
         new BukkitRunnable() {
             @Override

@@ -1,5 +1,6 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
 import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
@@ -11,23 +12,34 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.plugin.Plugin;
 
-
-public class Angel {
+public class Angel extends Race {
     private static final double HEAL_RADIUS = 6.0;
 
-    public static void handleAttack(Player player, UltraRaces plugin) {
-        if (Methods.isOnCooldown(player, plugin, "Healing light", true)) return;
-        ActivateActiveSkill(player, plugin);
+    public Angel(UltraRaces plugin) {
+        super(plugin);
     }
 
-    private static void ActivateActiveSkill(Player player, Plugin plugin) {
+    @Override
+    public String getRaceName() {
+        return "angel";
+    }
 
+    @Override
+    public void ActivateActiveSkill(Player player) {
 
+    }
+
+    @Override
+    public void onDamageDealt(Player damager, Entity victim, UltraRaces plugin) {
+        if (Methods.isOnCooldown(damager, plugin, "Healing light", true)) return;
+        activateHealingLight(damager, plugin);
+    }
+
+    private void activateHealingLight(Player player, Plugin plugin) {
         Location center = player.getLocation();
         World world = player.getWorld();
-        world.spawnParticle(Particle.HAPPY_VILLAGER, center, 50, 6, 1, 6, 0.2);
-        world.spawnParticle(Particle.HEART, center, 30, 6, 2, 6, 0.1);
-        world.playSound(center, Sound.BLOCK_BEACON_POWER_SELECT, SoundCategory.MASTER, 1.5f, 1f);
+
+        spawnAndSoundEffects(world, center);
         player.sendActionBar(Component.text("§b§oHealing light is activated..."));
 
         new BukkitRunnable() {
@@ -46,5 +58,11 @@ public class Angel {
                 if (++ticks >= 5) cancel();
             }
         }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    private void spawnAndSoundEffects(World world, Location center) {
+        world.spawnParticle(Particle.HAPPY_VILLAGER, center, 50, 6, 1, 6, 0.2);
+        world.spawnParticle(Particle.HEART, center, 30, 6, 2, 6, 0.1);
+        world.playSound(center, Sound.BLOCK_BEACON_POWER_SELECT, SoundCategory.MASTER, 1.5f, 1f);
     }
 }

@@ -1,33 +1,31 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
+import me.negan.ultraraces.UltraRaces;
+import me.negan.ultraraces.Utils.Methods;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
-import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
-public class Assassin {
+public class Assassin extends Race {
 
-    private static final Map<UUID, Long> lastUseTime = new HashMap<>();
+    public Assassin(UltraRaces plugin) {
+        super(plugin);
+    }
 
-    public static void useTeleportStrike(Player player, Plugin plugin) {
-        int cooldown = plugin.getConfig().getInt("goddess.skill_cooldown", 300000);
+    @Override
+    public String getRaceName() {
+        return "assassin";
+    }
+
+    public static void useTeleportStrike(Player player, UltraRaces plugin) {
+        if (Methods.isOnCooldown(player, plugin, "Soru", false)) return;
         double maxDistance = 10.0;
-        long now = System.currentTimeMillis();
-        UUID uuid = player.getUniqueId();
         List<Entity> nearby = player.getNearbyEntities(maxDistance, maxDistance, maxDistance);
 
-        if (lastUseTime.containsKey(uuid)) {
-            long lastUsed = lastUseTime.get(uuid);
-            if (now - lastUsed < cooldown) {
-                long secondsLeft = (cooldown - (now - lastUsed)) / 1000;
-                player.sendActionBar(Component.text("§cSoru on cooldown: " + secondsLeft + "s"));
-                return;
-            }
-        }
-        lastUseTime.put(uuid, now);
 
         Entity bestTarget = nearby.stream()
                 .filter(e -> e instanceof LivingEntity && e != player)
@@ -109,5 +107,12 @@ public class Assassin {
 
         player.getWorld().spawnParticle(Particle.CLOUD, facingLoc, 20, 0.3, 0.1, 0.3, 0.01);
         player.getWorld().playSound(facingLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1.2f);
+    }
+
+
+
+    @Override
+    public void ActivateActiveSkill(Player player) {
+
     }
 }

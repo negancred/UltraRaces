@@ -46,45 +46,43 @@ public class RaceListener implements Listener {
     @EventHandler
     public void onMobTarget(EntityTargetLivingEntityEvent event) {
         if (!(event.getTarget() instanceof Player player)) return;
-        if (Methods.isRace(player, plugin, "undead")) {
-            if (event.getEntity() instanceof Zombie || event.getEntity() instanceof Skeleton) {
-                event.setCancelled(true);
-            }
-        }
-        if (Methods.isRace(player, plugin, "marionette")) {
-            Marionette.tryRedirectMob(event, plugin);
+
+        Race race = RaceRegistry.getRace(Methods.getRace(player, plugin));
+        if (race != null) {
+            race.onMobTarget(player, event);
         }
     }
+
 
     @EventHandler
     public void onItemUse(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        Player player = event.getPlayer();
 
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR)) return;
+
+        Player player = event.getPlayer();
         if (!player.isSneaking()) return;
 
-        Material mainHand = player.getInventory().getItemInMainHand().getType();
-        Material offHand = player.getInventory().getItemInOffHand().getType();
+        String raceKey = Methods.getRace(player, plugin);
+        if (raceKey == null) return;
 
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-            if (Methods.isRace(player, plugin, "howler") && mainHand == Material.BONE) {
-                Howler.ActivateActiveSkill(player, plugin);
-            }
-            if (Methods.isRace(player, plugin, "cosmic") && mainHand == Material.ECHO_SHARD) {
-                Cosmic.ActivateActiveSkill(player, plugin);
-            }
-            if (Methods.isRace(player, plugin, "marionette") && mainHand == Material.STRING) {
-                Marionette.ActivateActiveSkill(player, plugin);
-            }
-            if (Methods.isRace(player, plugin, "goddess") && mainHand == Material.NAUTILUS_SHELL) {
-                Goddess.ActivateActiveSkill(player, plugin);
-            }
-            if (Methods.isRace(player, plugin, "assassin") && (offHand == Material.IRON_SWORD || mainHand == Material.IRON_SWORD)) {
+
+        if (raceKey.equalsIgnoreCase("assassin")) {
+            Material main = player.getInventory().getItemInMainHand().getType();
+            Material off = player.getInventory().getItemInOffHand().getType();
+            if (main == Material.IRON_SWORD || off == Material.IRON_SWORD) {
                 Assassin.useTeleportStrike(player, plugin);
             }
+            return;
+        }
+
+        Race race = RaceRegistry.getRace(raceKey);
+        if (race != null && race.ShouldActivateItemSkill(player)) {
+            race.ActivateActiveSkill(player);
         }
     }
+
+
 
     @EventHandler
     public void onDamageByFire(EntityDamageEvent event) {
@@ -94,8 +92,9 @@ public class RaceListener implements Listener {
                 cause != EntityDamageEvent.DamageCause.LAVA &&
                 cause != EntityDamageEvent.DamageCause.FIRE_TICK) return;
 
-        if (Methods.isRace(player, plugin, "piglin")) {
-            Piglin.handleFire(player);
+        Race race = RaceRegistry.getRace(Methods.getRace(player, plugin));
+        if (race != null) {
+            race.onFireDamage(player, event);
         }
     }
     private void startPiglinBurnCheckTask() {
@@ -118,38 +117,26 @@ public class RaceListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            String race = Methods.getRace(player, plugin);
-            if (race == null) return;
-            Goddess.handleDamage(player, event.getDamager(), plugin);
+        Entity damagerEntity = event.getDamager();
+        Entity victimEntity = event.getEntity();
 
-            switch (race.toLowerCase()) {
-                case "undead" -> {
-                    if (Methods.damagedByWho(event.getDamager(),
-                            EntityType.ZOMBIE, EntityType.SKELETON, EntityType.CREEPER,
-                            EntityType.ZOMBIE_VILLAGER, EntityType.DROWNED)) {
-                        event.setCancelled(true);
-                    }
-                }
-                case "cosmic" -> Cosmic.handleDamage(player, plugin);
-                case "angel" -> Angel.handleAttack(player, plugin);
-                case "werewolf" -> Werewolf.handleDamage(event, player, plugin);
+        // onDamageTaken
+        if (victimEntity instanceof Player victim) {
+            Race race = RaceRegistry.getRace(Methods.getRace(victim, plugin));
+            if (race != null) {
+                race.onDamageTaken(victim, damagerEntity, event);
             }
-
         }
 
-        if (event.getDamager() instanceof Player player) {
-            String race = Methods.getRace(player, plugin);
-            if (race == null) return;
-
-            switch (Methods.getRace(player, plugin).toLowerCase()) {
-                case "cosmic" -> Cosmic.handleAttack(player, plugin);
-                case "angel" -> Angel.handleAttack(player, plugin);
-                case "werewolf" -> Werewolf.handleAttack(event, player);
-                case "ghost" -> Ghost.handleAttack(player);
+        // onDamageDealt
+        if (damagerEntity instanceof Player damager) {
+            Race race = RaceRegistry.getRace(Methods.getRace(damager, plugin));
+            if (race != null) {
+                race.onDamageDealt(damager, victimEntity, plugin);
             }
         }
     }
+
 
 
     @EventHandler
@@ -182,21 +169,28 @@ public class RaceListener implements Listener {
 
     @EventHandler
     public void onBlock(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (player.isBlocking() && Methods.isRace(player, plugin, "sentinel")) {
-                Sentinel.handleBlock(player, plugin);
+        if ((!(event.getEntity() instanceof Player player))) return;
+
+        if (player.isBlocking()) {
+            String key = Methods.getRace(player, plugin);
+            Race race = RaceRegistry.getRace(key);
+
+            if (race != null) {
+                race.onBlock(player, event);
             }
         }
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!(event.getEntity().getKiller() instanceof Player player)) return;
+      Player player = event.getEntity().getKiller();
+        if (player == null) return;
 
-        if (Methods.isRace(player, plugin, "vampire")) {
-            Vampire vampire = new Vampire();
-            vampire.LifestealOnKill(player);
+        Race race = RaceRegistry.getRace(Methods.getRace(player, plugin));
+        if (race != null) {
+            race.onKill(player, event.getEntity());
         }
+
     }
 
 }

@@ -3,7 +3,7 @@ package me.negan.ultraraces.Race;
 import java.util.Set;
 import java.util.HashSet;
 
-public class RaceInfo {
+public class ValidRaces {
 
     private static final Set<String> validRaces = new HashSet<>();
 
@@ -23,6 +23,7 @@ public class RaceInfo {
         validRaces.add("marionette");
         validRaces.add("goddess");
         validRaces.add("assassin");
+        validRaces.add("snake");
 
     }
 

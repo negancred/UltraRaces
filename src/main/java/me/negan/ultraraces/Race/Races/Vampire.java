@@ -1,6 +1,9 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
+import me.negan.ultraraces.UltraRaces;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -10,7 +13,23 @@ import net.kyori.adventure.text.Component;
 
 import java.util.Objects;
 
-public class Vampire {
+public class Vampire extends Race {
+    public Vampire(UltraRaces plugin) {
+        super(plugin);
+    }
+
+    @Override
+    public String getRaceName() {
+        return "vampire";
+    }
+    @Override
+    public void onKill(Player player, Entity target){
+        LifestealOnKill(player);
+    }
+    @Override
+    public void ContinuousPassiveEffect(Player player) {
+        applyEffect(player);
+    }
 
     public static void applyEffect(Player player) {
         World world = player.getWorld();
@@ -46,5 +65,12 @@ public class Vampire {
         player.setHealth(Math.min(currentHealth + healAmount, maxHealth));
         player.setFoodLevel((int) (player.getFoodLevel() + 5.0));
         player.getWorld().spawnParticle(Particle.HEART, player.getLocation(), 5);
+    }
+
+
+
+    @Override
+    public void ActivateActiveSkill(Player player) {
+
     }
 }

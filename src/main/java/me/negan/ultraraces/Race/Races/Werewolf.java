@@ -1,5 +1,6 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
 import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
@@ -16,11 +17,18 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
-public class Werewolf {
+public class Werewolf extends Race {
     private static final Map<UUID, Long> frenzyTimers = new HashMap<>();
     private static final Set<UUID> inFrenzy = new HashSet<>();
+    @Override
+    public String getRaceName() {
+        return "werewolf";
+    }
 
-    public static void applyEffect(Player player) {
+    public Werewolf(UltraRaces plugin) {
+        super(plugin);
+    }
+    public void ContinuousPassiveEffect(Player player) {
         World world = player.getWorld();
         long time = world.getTime();
 
@@ -35,21 +43,21 @@ public class Werewolf {
         }
     }
 
-    public static void handleDamage(EntityDamageByEntityEvent event, Player player, UltraRaces plugin) {
+    public void onDamageTaken(Player player, Entity damager, EntityDamageByEntityEvent event) {
         double damage = event.getFinalDamage();
         double currentHealth = player.getHealth();
         if (currentHealth - damage <= currentHealth - 6.0) {
             triggerFrenzy(player, plugin);
         }
     }
-
-    public static void handleAttack(EntityDamageByEntityEvent event, Player player) {
+    public void onDamageDealt(Player player, Entity target, UltraRaces event) {
         if (!isInFrenzy(player)) return;
-        Entity target = event.getEntity();
+
         if (target instanceof LivingEntity) {
             clearFrenzy(player);
         }
     }
+
 
     public static void triggerFrenzy(Player player, UltraRaces plugin) {
         if (Methods.isOnCooldown(player, plugin, "Frenzy", false)) return;
@@ -88,5 +96,11 @@ public class Werewolf {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void ActivateActiveSkill(Player player) {
+
     }
 }

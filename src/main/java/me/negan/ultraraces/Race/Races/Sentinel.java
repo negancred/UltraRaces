@@ -1,19 +1,34 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
 import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class Sentinel {
+public class Sentinel extends Race {
     private static final double PASSIVE_RADIUS = 10.0;
 
+    @Override
+    public String getRaceName() {
+        return "sentinel";
+    }
+    public Sentinel(UltraRaces plugin) {
+        super(plugin);
+    }
+
+    @Override
+    public void onBlock(Player player, EntityDamageByEntityEvent event) {
+        handleBlock(player, plugin);
+    }
+
     public static void handleBlock(Player player, UltraRaces plugin) {
-        if (Methods.isOnCooldown(player, plugin, "Scatter", false)) return;
+        if (Methods.isOnCooldown(player, plugin, "Bulwark", false)) return;
         ResistanceToAllies(player);
 
         player.getWorld().spawnParticle(Particle.ASH, player.getLocation(), 20, 1, 1, 1);
@@ -33,4 +48,10 @@ public class Sentinel {
         }
     }
 
+
+
+    @Override
+    public void ActivateActiveSkill(Player player) {
+
+    }
 }

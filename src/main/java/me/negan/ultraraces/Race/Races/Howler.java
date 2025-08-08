@@ -1,15 +1,30 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
 import me.negan.ultraraces.Utils.Methods;
 import me.negan.ultraraces.UltraRaces;
 import org.bukkit.*;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import java.util.*;
+import java.util.Random;
 
-public class Howler {
+public class Howler extends Race {
 
-    public static void ActivateActiveSkill(Player player, UltraRaces plugin) {
+    public Howler(UltraRaces plugin) {
+        super(plugin);
+    }
+
+    @Override
+    public String getRaceName() {
+        return "howler";
+    }
+    @Override
+    public boolean ShouldActivateItemSkill(Player player) {
+        return player.getInventory().getItemInMainHand().getType() == Material.BONE;
+    }
+    @Override
+    public void ActivateActiveSkill(Player player) {
         if (Methods.isOnCooldown(player, plugin, "Howl", false)) return;
         tauntNearbyMobs(player);
         Sound[] tauntSounds = {
@@ -18,11 +33,11 @@ public class Howler {
                 Sound.ITEM_GOAT_HORN_SOUND_2
         };
         Random random = new Random();
-        Sound LuckySound = tauntSounds[random.nextInt(tauntSounds.length)];
-        player.getWorld().playSound(player.getLocation(), LuckySound, 1.2f, 0.8f);
+        Sound luckySound = tauntSounds[random.nextInt(tauntSounds.length)];
+        player.getWorld().playSound(player.getLocation(), luckySound, 1.2f, 0.8f);
     }
 
-    private static void tauntNearbyMobs(Player player) {
+    private void tauntNearbyMobs(Player player) {
         World world = player.getWorld();
         Location location = player.getLocation();
 
@@ -35,5 +50,15 @@ public class Howler {
                 slime.setTarget(player);
             }
         }
+    }
+
+    @Override
+    public void onDamageTaken(Player player, Entity damager, EntityDamageByEntityEvent event) {
+        // Optional: leave empty or implement defense logic
+    }
+
+    @Override
+    public void onDamageDealt(Player player, Entity target, UltraRaces event) {
+        // Optional: leave empty or implement offensive logic
     }
 }

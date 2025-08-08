@@ -31,7 +31,7 @@ public class RaceCommand implements CommandExecutor {
                 }
 
                 String race = args[1].toLowerCase();
-                if (!RaceInfo.isValidRace(race)) {
+                if (!ValidRaces.isValidRace(race)) {
                     plugin.sendPrefixed(player, "Invalid race! Use /race list to see available races.");
                     return true;
                 }
@@ -44,7 +44,7 @@ public class RaceCommand implements CommandExecutor {
 
             case "list" -> {
                 sendPrefixed(sender, "Available races:");
-                for (String race : RaceInfo.getAllRaceKeys()) {
+                for (String race : ValidRaces.getAllRaceKeys()) {
                     sender.sendMessage(" §7- " + race);
                 }
             }

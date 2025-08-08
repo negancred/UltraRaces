@@ -1,14 +1,11 @@
 package me.negan.ultraraces;
 
-import me.negan.ultraraces.Race.RaceCommand;
-import me.negan.ultraraces.Race.DescriptionManager;
-import me.negan.ultraraces.Race.RaceListener;
+import me.negan.ultraraces.Race.*;
 import me.negan.ultraraces.Race.Races.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
@@ -21,26 +18,31 @@ public final class UltraRaces extends JavaPlugin {
         Objects.requireNonNull(getCommand("race")).setExecutor(new RaceCommand(this, descriptionManager));
         getServer().getPluginManager().registerEvents(new RaceListener(this), this);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    String race = getConfig().getString("races." + player.getUniqueId());
-                    if (race == null) continue;
-
-                    switch (race.toLowerCase()) {
-                        case "goblin" -> Goblin.applyEffect(player);
-                        case "merman" -> Merman.applyEffect(player);
-                        case "human" -> Human.applyEffect(player);
-                        case "werewolf" -> Werewolf.applyEffect(player);
-                        case "undead" -> Undead.applyEffect(player);
-                        case "vampire" -> Vampire.applyEffect(player);
-                        case "piglin" -> Piglin.applyEffect(player, UltraRaces.this);
-                        case "cosmic", "angel", "sentinel", "howler", "marionette", "goddess", "assassin" -> {}
-                    }
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                String raceName = getConfig().getString("races." + player.getUniqueId());
+                assert raceName != null;
+                Race race = RaceRegistry.getRace(raceName);
+                if (race != null) {
+                    race.ContinuousPassiveEffect(player);
                 }
             }
-        }.runTaskTimer(this, 0L, 10L);
+        }, 0L, 40L);
+
+        RaceRegistry.register("goddess", new Goddess(this));
+        RaceRegistry.register("angel", new Angel(this));
+        RaceRegistry.register("assassin", new Assassin(this));
+        RaceRegistry.register("cosmic", new Cosmic(this));
+        RaceRegistry.register("ghost", new Ghost(this));
+        RaceRegistry.register("goblin", new Goblin(this));
+        RaceRegistry.register("howler", new Howler(this));
+        RaceRegistry.register("marionette", new Marionette(this));
+        RaceRegistry.register("merman", new Merman(this));
+        RaceRegistry.register("undead", new Undead(this));
+        RaceRegistry.register("piglin", new Piglin(this));
+        RaceRegistry.register("sentinel", new Sentinel(this));
+        RaceRegistry.register("snake", new Snake(this));
+        RaceRegistry.register("vampire", new Vampire(this));
     }
 
     @Override

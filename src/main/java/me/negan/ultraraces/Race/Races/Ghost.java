@@ -1,16 +1,28 @@
 package me.negan.ultraraces.Race.Races;
 
+import me.negan.ultraraces.Race.Race;
+import me.negan.ultraraces.UltraRaces;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
-public class Ghost {
+public class Ghost extends Race {
     private static final Map<UUID, Long> lastMoved = new HashMap<>();
     private static final Map<UUID, Boolean> isGhostActivated = new HashMap<>();
     private static final long IDLE_TIME_MS = 3000;
     private static final int EFFECT_DURATION_TICKS = 100;
+
+    public Ghost(UltraRaces plugin) {
+        super(plugin);
+    }
+
+    @Override
+    public String getRaceName() {
+        return "ghost";
+    }
 
     public static void handleMovement(Player player) {
         lastMoved.put(player.getUniqueId(), System.currentTimeMillis());
@@ -39,8 +51,8 @@ public class Ghost {
             }
         }
     }
-
-    public static void handleAttack(Player player){
+    @Override
+    public void onDamageDealt(Player player, Entity target, UltraRaces event) {
         if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
             removeInvisibility(player);
         }
@@ -58,5 +70,11 @@ public class Ghost {
 
     private static void removeInvisibility(Player player){
         player.removePotionEffect(PotionEffectType.INVISIBILITY);
+    }
+
+
+    @Override
+    public void ActivateActiveSkill(Player player) {
+
     }
 }
